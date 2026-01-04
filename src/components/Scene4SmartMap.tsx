@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { motion } from "motion/react";
 import { MapPin, Navigation, AlertCircle, CheckCircle, Car, Lock } from "lucide-react";
+import { ImageWithFallback } from "./ui/utils";
 
 interface Street {
   id: number;
@@ -155,6 +156,35 @@ export function Scene4SmartMap() {
 
   return (
     <section className="relative min-h-screen flex items-center justify-center bg-gradient-to-b from-purple-900 via-slate-900 to-slate-800 py-20">
+      <div className="absolute inset-0 opacity-40">
+        <ImageWithFallback
+          src="https://images.unsplash.com/photo-1576749288264-207936efb479?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHx1cmJhbiUyMGZsb29kaW5nJTIwcmFpbiUyMGNpdHl8ZW58MXx8fHwxNzYwNDM2Mjc2fDA&ixlib=rb-4.1.0&q=80&w=1080"
+          alt="Flooded city"
+          className="w-full h-full object-cover"
+        />
+      </div>
+
+      <div className="absolute inset-0 pointer-events-none">
+        {Array.from({ length: 50 }).map((_, i) => (
+          <motion.div
+            key={i}
+            className="absolute w-0.5 h-12 bg-blue-300 opacity-30"
+            style={{
+              left: `${Math.random() * 100}%`,
+            }}
+            animate={{
+              y: ["0vh", "100vh"],
+            }}
+            transition={{
+              duration: Math.random() * 1 + 0.5,
+              repeat: Infinity,
+              ease: "linear",
+              delay: Math.random() * 2,
+            }}
+          />
+        ))}
+      </div>
+
       <div className="relative z-10 max-w-7xl mx-auto px-6 w-full">
         <motion.div
           initial={{ opacity: 0, y: 30 }}
@@ -265,7 +295,7 @@ export function Scene4SmartMap() {
                   initial={{ scale: 0.9, opacity: 0 }}
                   animate={{ scale: 1, opacity: 1 }}
                   transition={{ duration: 0.5 }}
-                  className="text-center max-w-md"
+                  className="text-center max-w-2xl px-6 py-4"
                 >
                   <Lock className="w-16 h-16 text-cyan-400 mx-auto mb-4" />
                   <h3 className="text-white text-2xl font-bold mb-2">Cần nâng cấp tài khoản</h3>

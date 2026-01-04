@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { motion } from "motion/react";
-import { Users, CheckCircle, Clock, X, ArrowLeft, Shield, Map } from "lucide-react";
+import { Users, CheckCircle, Clock, Trash2, ArrowLeft, Shield, Map } from "lucide-react";
 import { adminAPI } from "../services/api";
 
 interface User {
@@ -163,10 +163,10 @@ export function AdminDashboardPage() {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-gradient-to-b from-gray-100 via-gray-50 to-white pt-20 flex items-center justify-center">
+      <div className="min-h-screen bg-gradient-to-b from-slate-800 via-blue-900 to-cyan-900 pt-20 flex items-center justify-center">
         <div className="text-center">
-          <div className="w-16 h-16 border-4 border-cyan-500 border-t-transparent rounded-full animate-spin mx-auto mb-4" />
-          <p className="text-gray-600">Đang tải...</p>
+          <div className="w-16 h-16 border-4 border-cyan-400 border-t-transparent rounded-full animate-spin mx-auto mb-4" />
+          <p className="text-cyan-100">Đang tải...</p>
         </div>
       </div>
     );
@@ -174,7 +174,7 @@ export function AdminDashboardPage() {
 
   return (
     <motion.div
-      className="min-h-screen bg-gradient-to-b from-gray-100 via-gray-50 to-white pt-20"
+      className="min-h-screen bg-gradient-to-b from-slate-800 via-blue-900 to-cyan-900 pt-20"
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
       transition={{ duration: 0.5 }}
@@ -182,7 +182,7 @@ export function AdminDashboardPage() {
       <div className="max-w-7xl mx-auto px-6 py-12">
         <motion.button
           onClick={() => navigate("/")}
-          className="mb-6 flex items-center gap-2 px-4 py-2 bg-white hover:bg-cyan-50 text-gray-700 hover:text-cyan-600 rounded-lg transition-all duration-200 shadow-sm hover:shadow-md"
+          className="mb-6 flex items-center gap-2 px-4 py-2 bg-white/10 hover:bg-white/20 text-cyan-100 hover:text-white rounded-lg transition-all duration-200 shadow-sm hover:shadow-cyan-400/40 border border-white/20"
           whileHover={{ scale: 1.02, x: -2 }}
           whileTap={{ scale: 0.98 }}
         >
@@ -191,17 +191,17 @@ export function AdminDashboardPage() {
         </motion.button>
 
         <motion.div
-          className="bg-white rounded-2xl shadow-2xl overflow-hidden mb-8"
+          className="bg-slate-900/70 backdrop-blur-xl border border-cyan-400/30 rounded-2xl shadow-2xl overflow-hidden mb-8"
           initial={{ y: 20, opacity: 0 }}
           animate={{ y: 0, opacity: 1 }}
           transition={{ duration: 0.5, delay: 0.2 }}
         >
-          <div className="bg-gradient-to-r from-purple-500 to-indigo-500 p-8">
+          <div className="bg-gradient-to-r from-cyan-500/80 to-blue-600/80 p-8">
             <div className="flex items-center gap-4">
               <Shield className="w-12 h-12 text-white" />
               <div>
                 <h1 className="text-3xl font-bold text-white mb-2">Admin Dashboard</h1>
-                <p className="text-purple-100">Quản lý người dùng và quyền truy cập</p>
+                <p className="text-cyan-100">Quản lý người dùng và quyền truy cập</p>
               </div>
             </div>
           </div>
@@ -210,13 +210,13 @@ export function AdminDashboardPage() {
         {/* Pending Upgrade Requests */}
         {pendingUsers.length > 0 && (
           <motion.div
-            className="bg-yellow-50 border-2 border-yellow-300 rounded-xl p-6 mb-8"
+            className="bg-yellow-500/10 border border-yellow-400/60 rounded-xl p-6 mb-8 text-yellow-50"
             initial={{ opacity: 0, y: -10 }}
             animate={{ opacity: 1, y: 0 }}
           >
             <div className="flex items-center gap-2 mb-4">
-              <Clock className="w-6 h-6 text-yellow-600" />
-              <h2 className="text-xl font-bold text-yellow-900">
+              <Clock className="w-6 h-6 text-yellow-300" />
+              <h2 className="text-xl font-bold text-yellow-100">
                 Yêu cầu nâng cấp đang chờ ({pendingUsers.length})
               </h2>
             </div>
@@ -224,12 +224,12 @@ export function AdminDashboardPage() {
               {pendingUsers.map((pendingUser) => (
                 <div
                   key={pendingUser.id}
-                  className="bg-white rounded-lg p-4 border border-yellow-200 flex items-center justify-between"
+                  className="bg-slate-900/70 rounded-lg p-4 border border-yellow-400/40 flex items-center justify-between"
                 >
                   <div>
-                    <p className="font-semibold text-gray-800">{pendingUser.name}</p>
-                    <p className="text-sm text-gray-600">{pendingUser.email}</p>
-                    <p className="text-xs text-gray-500 mt-1">
+                    <p className="font-semibold text-white">{pendingUser.name}</p>
+                    <p className="text-sm text-slate-200">{pendingUser.email}</p>
+                    <p className="text-xs text-slate-400 mt-1">
                       Yêu cầu lúc: {pendingUser.upgradeRequestedAt 
                         ? new Date(pendingUser.upgradeRequestedAt).toLocaleString('vi-VN')
                         : 'N/A'}
@@ -252,63 +252,63 @@ export function AdminDashboardPage() {
 
         {/* All Users Table */}
         <motion.div
-          className="bg-white rounded-2xl shadow-2xl overflow-hidden"
+          className="bg-slate-900/70 backdrop-blur-xl border border-white/20 rounded-2xl shadow-2xl overflow-hidden"
           initial={{ y: 20, opacity: 0 }}
           animate={{ y: 0, opacity: 1 }}
           transition={{ duration: 0.5, delay: 0.3 }}
         >
-          <div className="p-6 border-b border-gray-200">
+          <div className="p-6 border-b border-white/10">
             <div className="flex items-center gap-3">
-              <Users className="w-6 h-6 text-purple-500" />
-              <h2 className="text-2xl font-bold text-gray-800">Danh sách người dùng</h2>
+              <Users className="w-6 h-6 text-cyan-400" />
+              <h2 className="text-2xl font-bold text-white">Danh sách người dùng</h2>
             </div>
           </div>
 
           <div className="overflow-x-auto">
-            <table className="w-full">
-              <thead className="bg-gray-50">
+            <table className="w-full text-center">
+              <thead className="bg-slate-900/80">
                 <tr>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  <th className="px-6 py-3 text-xs font-medium text-slate-300 uppercase tracking-wider text-center">
                     Tên
                   </th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  <th className="px-6 py-3 text-xs font-medium text-slate-300 uppercase tracking-wider text-center">
                     Email
                   </th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  <th className="px-6 py-3 text-xs font-medium text-slate-300 uppercase tracking-wider text-center">
                     Vai trò
                   </th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  <th className="px-6 py-3 text-xs font-medium text-slate-300 uppercase tracking-wider text-center">
                     Quyền Map
                   </th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  <th className="px-6 py-3 text-xs font-medium text-slate-300 uppercase tracking-wider text-center">
                     Trạng thái
                   </th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  <th className="px-6 py-3 text-xs font-medium text-slate-300 uppercase tracking-wider text-center">
                     Hành động
                   </th>
                 </tr>
               </thead>
-              <tbody className="bg-white divide-y divide-gray-200">
+              <tbody className="bg-slate-900/60 divide-y divide-slate-800">
                 {users.map((u) => (
-                  <tr key={u.id} className="hover:bg-gray-50">
-                    <td className="px-6 py-4 whitespace-nowrap">
-                      <div className="text-sm font-medium text-gray-900">{u.name}</div>
+                  <tr key={u.id} className="hover:bg-slate-800/80">
+                    <td className="px-6 py-4 whitespace-nowrap text-center">
+                      <div className="text-sm font-medium text-white">{u.name}</div>
                     </td>
-                    <td className="px-6 py-4 whitespace-nowrap">
-                      <div className="text-sm text-gray-500">{u.email}</div>
+                    <td className="px-6 py-4 whitespace-nowrap text-center">
+                      <div className="text-sm text-slate-300">{u.email}</div>
                     </td>
-                    <td className="px-6 py-4 whitespace-nowrap">
+                    <td className="px-6 py-4 whitespace-nowrap text-center">
                       <span className={`px-2 py-1 text-xs rounded-full ${
                         u.role === 'admin' 
-                          ? 'bg-purple-100 text-purple-800' 
-                          : 'bg-blue-100 text-blue-800'
+                          ? 'bg-purple-500/20 text-purple-200' 
+                          : 'bg-blue-500/20 text-blue-200'
                       }`}>
                         {u.role === 'admin' ? 'Admin' : 'User'}
                       </span>
                     </td>
-                    <td className="px-6 py-4 whitespace-nowrap">
+                    <td className="px-6 py-4 whitespace-nowrap text-center">
                       {u.role === 'admin' ? (
-                        <span className="text-gray-400 text-sm">-</span>
+                        <span className="text-slate-500 text-sm">-</span>
                       ) : (
                         <div className="flex items-center justify-center">
                           <input
@@ -320,16 +320,16 @@ export function AdminDashboardPage() {
                         </div>
                       )}
                     </td>
-                    <td className="px-6 py-4 whitespace-nowrap">
+                    <td className="px-6 py-4 whitespace-nowrap text-center">
                       {u.role === 'admin' ? (
-                        <span className="text-gray-400 text-sm">-</span>
+                        <span className="text-slate-500 text-sm">-</span>
                       ) : (
                         <span className={`px-2 py-1 text-xs rounded-full ${
                           u.upgradeStatus === 'approved'
-                            ? 'bg-green-100 text-green-800'
+                            ? 'bg-green-500/20 text-green-200'
                             : u.upgradeStatus === 'pending'
-                            ? 'bg-yellow-100 text-yellow-800'
-                            : 'bg-gray-100 text-gray-800'
+                            ? 'bg-yellow-500/20 text-yellow-200'
+                            : 'bg-slate-700 text-slate-200'
                         }`}>
                           {u.upgradeStatus === 'approved' ? 'Đã cấp quyền' :
                            u.upgradeStatus === 'pending' ? 'Đang chờ' : 'Chưa nâng cấp'}
@@ -337,11 +337,11 @@ export function AdminDashboardPage() {
                       )}
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
-                      <div className="flex items-center gap-2">
+                      <div className="flex items-center justify-center gap-3">
                         {!u.hasMapAccess && u.upgradeStatus === 'pending' && (
                           <motion.button
                             onClick={() => handleGrantAccess(u.id)}
-                            className="text-green-600 hover:text-green-900 flex items-center gap-1"
+                            className="text-green-400 hover:text-green-200 flex items-center gap-1"
                             whileHover={{ scale: 1.05 }}
                           >
                             <CheckCircle className="w-4 h-4" />
@@ -351,11 +351,10 @@ export function AdminDashboardPage() {
                         {u.role !== 'admin' && (
                           <motion.button
                             onClick={() => handleDeleteUser(u.id)}
-                            className="text-red-600 hover:text-red-900 flex items-center gap-1"
+                            className="text-red-400 hover:text-red-200 flex items-center"
                             whileHover={{ scale: 1.05 }}
                           >
-                            <X className="w-4 h-4" />
-                            Xóa
+                            <Trash2 className="w-5 h-5" />
                           </motion.button>
                         )}
                       </div>

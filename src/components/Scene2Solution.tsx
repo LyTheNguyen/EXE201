@@ -35,7 +35,7 @@ export function Scene2Solution() {
   };
 
   return (
-    <section className="relative min-h-screen flex items-center justify-center bg-gradient-to-b from-gray-600 via-blue-900 to-blue-950 py-20">
+    <section className="relative min-h-screen flex items-center justify-center bg-gradient-to-b from-slate-800 via-blue-900 to-cyan-900 py-20">
       <div className="relative z-10 max-w-6xl mx-auto px-6">
         <motion.div
           initial={{ opacity: 0, y: 30 }}

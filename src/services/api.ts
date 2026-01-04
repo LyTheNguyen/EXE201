@@ -137,6 +137,64 @@ export const upgradeAPI = {
   },
 };
 
+export const userAPI = {
+  updateProfile: async (data: { name: string; email: string }) => {
+    try {
+      const response = await fetch(`${API_URL}/user/profile`, {
+        method: 'PUT',
+        headers: getAuthHeaders(),
+        body: JSON.stringify(data),
+      });
+
+      if (!response.ok) {
+        const errorData = await response.json().catch(() => ({ message: 'Network error' }));
+        return {
+          success: false,
+          message: errorData.message || `Server error: ${response.status}`,
+        };
+      }
+
+      return await response.json();
+    } catch (error: any) {
+      return {
+        success: false,
+        message: error.message || 'Không thể kết nối đến server.',
+      };
+    }
+  },
+
+  uploadAvatar: async (file: File) => {
+    try {
+      const token = localStorage.getItem("token");
+      const formData = new FormData();
+      formData.append('avatar', file);
+
+      const response = await fetch(`${API_URL}/user/avatar`, {
+        method: 'POST',
+        headers: {
+          ...(token && { 'Authorization': `Bearer ${token}` }),
+        },
+        body: formData,
+      });
+
+      if (!response.ok) {
+        const errorData = await response.json().catch(() => ({ message: 'Network error' }));
+        return {
+          success: false,
+          message: errorData.message || `Server error: ${response.status}`,
+        };
+      }
+
+      return await response.json();
+    } catch (error: any) {
+      return {
+        success: false,
+        message: error.message || 'Không thể kết nối đến server.',
+      };
+    }
+  },
+};
+
 export const adminAPI = {
   getUsers: async () => {
     try {

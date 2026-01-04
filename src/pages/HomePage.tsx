@@ -9,10 +9,10 @@ export function HomePage() {
   return (
     <div className="size-full overflow-y-auto">
       <Header />
-      <Scene1Problem />
+      <Scene4SmartMap />
       <Scene2Solution />
       <Scene3Processing />
-      <Scene4SmartMap />
+      <Scene1Problem />
       <Scene5Benefits />
     </div>
   );

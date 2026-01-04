@@ -28,7 +28,7 @@ export function Scene3Processing() {
   ];
 
   return (
-    <section className="relative min-h-screen flex items-center justify-center bg-gradient-to-b from-blue-950 via-indigo-900 to-purple-900 py-20">
+    <section className="relative min-h-screen flex items-center justify-center bg-gradient-to-b from-slate-800 via-blue-900 to-cyan-900 py-20">
       <div className="relative z-10 max-w-7xl mx-auto px-6 w-full">
         <motion.div
           initial={{ opacity: 0, y: 30 }}

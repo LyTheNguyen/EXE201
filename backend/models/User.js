@@ -42,6 +42,10 @@ const userSchema = new mongoose.Schema({
   },
   mapAccessExpiresAt: {
     type: Date,
+    default: Date.now,
+  },
+  img: {
+    type: String,
   },
   createdAt: {
     type: Date,

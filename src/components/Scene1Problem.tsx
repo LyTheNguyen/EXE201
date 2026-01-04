@@ -30,37 +30,7 @@ export function Scene1Problem() {
   ];
 
   return (
-    <section className="relative min-h-screen flex items-center justify-center overflow-hidden bg-gradient-to-b from-gray-800 via-gray-700 to-gray-600 pt-16">
-      {/* Background Image */}
-      <div className="absolute inset-0 opacity-40">
-        <ImageWithFallback
-          src="https://images.unsplash.com/photo-1576749288264-207936efb479?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHx1cmJhbiUyMGZsb29kaW5nJTIwcmFpbiUyMGNpdHl8ZW58MXx8fHwxNzYwNDM2Mjc2fDA&ixlib=rb-4.1.0&q=80&w=1080"
-          alt="Flooded city"
-          className="w-full h-full object-cover"
-        />
-      </div>
-
-      {/* Rain Effect */}
-      <div className="absolute inset-0 pointer-events-none">
-        {Array.from({ length: 50 }).map((_, i) => (
-          <motion.div
-            key={i}
-            className="absolute w-0.5 h-12 bg-blue-300 opacity-30"
-            style={{
-              left: `${Math.random() * 100}%`,
-            }}
-            animate={{
-              y: ["0vh", "100vh"],
-            }}
-            transition={{
-              duration: Math.random() * 1 + 0.5,
-              repeat: Infinity,
-              ease: "linear",
-              delay: Math.random() * 2,
-            }}
-          />
-        ))}
-      </div>
+    <section className="relative min-h-screen flex items-center justify-center overflow-hidden bg-gradient-to-b from-slate-800 via-blue-900 to-cyan-900 pt-16">
 
       {/* Content Container */}
       <div className="relative z-10 max-w-6xl mx-auto px-6 text-center">

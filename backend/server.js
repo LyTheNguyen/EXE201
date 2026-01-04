@@ -8,6 +8,9 @@ const app = express();
 // Middleware
 app.use(cors());
 app.use(express.json());
+// Serve uploaded files (avatars, etc.) from the local uploads folder
+// The files are saved under backend/uploads, so we expose /uploads -> ./uploads
+app.use('/uploads', express.static('uploads'));
 
 // MongoDB Connection
 // Try 127.0.0.1 instead of localhost if connection fails
@@ -21,6 +24,7 @@ mongoose.connect(MONGODB_URI)
 app.use('/api/auth', require('./routes/auth'));
 app.use('/api/admin', require('./routes/admin'));
 app.use('/api/upgrade', require('./routes/upgrade'));
+app.use('/api/user', require('./routes/user'));
 
 // Health check
 app.get('/api/health', (req, res) => {

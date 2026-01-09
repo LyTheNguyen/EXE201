@@ -1,0 +1,17 @@
+{
+  "headers": [
+    {
+      "source": "/(.*)",
+      "headers": [
+        {
+          "key": "X-Frame-Options",
+          "value": "ALLOW-FROM https://thuytinh.duckdns.org/"
+        },
+        {
+          "key": "Content-Security-Policy",
+          "value": "frame-ancestors https://thuytinh.duckdns.org/"
+        }
+      ]
+    }
+  ]
+}

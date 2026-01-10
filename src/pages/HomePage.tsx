@@ -4,15 +4,17 @@ import { Scene2Solution } from "../components/Scene2Solution";
 import { Scene3Processing } from "../components/Scene3Processing";
 import { Scene4SmartMap } from "../components/Scene4SmartMap";
 import { Scene5Benefits } from "../components/Scene5Benefits";
+import { LeafletLoader } from "../components/LeafletLoader";
 
 export function HomePage() {
   return (
     <div className="size-full overflow-y-auto">
+      <LeafletLoader />
       <Header />
       <Scene4SmartMap />
+      <Scene1Problem />
       <Scene2Solution />
       <Scene3Processing />
-      <Scene1Problem />
       <Scene5Benefits />
     </div>
   );

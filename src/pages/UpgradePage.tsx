@@ -94,7 +94,7 @@ export function UpgradePage() {
 
   return (
     <motion.div
-      className="min-h-screen bg-gradient-to-b from-gray-100 via-gray-50 to-white pt-20"
+      className="min-h-screen bg-gradient-to-b from-slate-800 via-blue-900 to-cyan-900 pt-20"
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
       transition={{ duration: 0.5 }}
@@ -102,7 +102,7 @@ export function UpgradePage() {
       <div className="max-w-4xl mx-auto px-6 py-12">
         <motion.button
           onClick={() => navigate("/")}
-          className="mb-6 flex items-center gap-2 px-4 py-2 bg-white hover:bg-cyan-50 text-gray-700 hover:text-cyan-600 rounded-lg transition-all duration-200 shadow-sm hover:shadow-md"
+          className="mb-6 flex items-center gap-2 px-4 py-2 bg-white/10 hover:bg-white/20 text-cyan-100 hover:text-white rounded-lg transition-all duration-200 shadow-sm hover:shadow-cyan-400/40 border border-white/20"
           whileHover={{ scale: 1.02, x: -2 }}
           whileTap={{ scale: 0.98 }}
         >
@@ -111,7 +111,7 @@ export function UpgradePage() {
         </motion.button>
 
         <motion.div
-          className="bg-white rounded-2xl shadow-2xl overflow-hidden"
+          className="bg-slate-900/70 backdrop-blur-xl border border-cyan-400/60 rounded-2xl shadow-2xl overflow-hidden"
           initial={{ y: 20, opacity: 0 }}
           animate={{ y: 0, opacity: 1 }}
           transition={{ duration: 0.5, delay: 0.2 }}
@@ -134,11 +134,11 @@ export function UpgradePage() {
             {/* Status Display */}
             {upgradeStatus === "none" && (
               <motion.div
-                className="mb-8 p-4 bg-yellow-50 border border-yellow-200 rounded-lg"
+                className="mb-8 p-4 bg-yellow-500/20 border border-yellow-400/30 rounded-lg"
                 initial={{ opacity: 0, y: -10 }}
                 animate={{ opacity: 1, y: 0 }}
               >
-                <p className="text-yellow-800 text-sm">
+                <p className="text-yellow-200 text-sm">
                   Bạn chưa nâng cấp tài khoản. Vui lòng quét mã QR để thanh toán.
                 </p>
               </motion.div>
@@ -146,14 +146,14 @@ export function UpgradePage() {
 
             {upgradeStatus === "pending" && (
               <motion.div
-                className="mb-8 p-4 bg-blue-50 border border-blue-200 rounded-lg"
+                className="mb-8 p-4 bg-blue-500/20 border border-blue-400/30 rounded-lg"
                 initial={{ opacity: 0, y: -10 }}
                 animate={{ opacity: 1, y: 0 }}
               >
                 <div className="flex items-center justify-between mb-2">
                   <div className="flex items-center gap-2">
-                    <div className="w-2 h-2 bg-blue-500 rounded-full animate-pulse" />
-                    <p className="text-blue-800 font-medium">
+                    <div className="w-2 h-2 bg-blue-400 rounded-full animate-pulse" />
+                    <p className="text-blue-200 font-medium">
                       Đã nâng cấp - Đang chờ cấp quyền
                     </p>
                   </div>
@@ -166,7 +166,7 @@ export function UpgradePage() {
                     Kiểm tra lại
                   </motion.button>
                 </div>
-                <p className="text-blue-600 text-sm">
+                <p className="text-blue-300 text-sm">
                   Yêu cầu của bạn đã được gửi. Admin sẽ xem xét và cấp quyền trong thời gian sớm nhất.
                 </p>
               </motion.div>
@@ -174,36 +174,36 @@ export function UpgradePage() {
 
             {upgradeStatus === "approved" && (
               <motion.div
-                className="mb-8 p-4 bg-green-50 border border-green-200 rounded-lg"
+                className="mb-8 p-4 bg-green-500/20 border border-green-400/30 rounded-lg"
                 initial={{ opacity: 0, y: -10 }}
                 animate={{ opacity: 1, y: 0 }}
               >
                 <div className="flex items-center gap-2">
-                  <Check className="w-5 h-5 text-green-500" />
-                  <p className="text-green-800 font-medium">
+                  <Check className="w-5 h-5 text-green-400" />
+                  <p className="text-green-200 font-medium">
                     Đã được cấp quyền - Có thể xem map
                   </p>
                 </div>
-                <p className="text-green-600 text-sm mt-1">
+                <p className="text-green-300 text-sm mt-1">
                   Tài khoản của bạn đã được nâng cấp. Bạn có thể sử dụng đầy đủ tính năng bản đồ thông minh.
                 </p>
               </motion.div>
             )}
 
             {/* Benefits */}
-            <h2 className="text-2xl font-bold text-gray-800 mb-6">Quyền lợi khi nâng cấp</h2>
+            <h2 className="text-2xl font-bold text-white mb-6">Quyền lợi khi nâng cấp</h2>
             <div className="grid md:grid-cols-3 gap-4 mb-8">
               {benefits.map((benefit, index) => (
                 <motion.div
                   key={index}
-                  className="p-6 bg-gray-50 rounded-lg border border-gray-200"
+                  className="p-6 bg-slate-800/70 rounded-lg border border-cyan-400/30"
                   initial={{ opacity: 0, y: 20 }}
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ delay: 0.4 + index * 0.1 }}
                 >
-                  <benefit.icon className="w-8 h-8 text-cyan-500 mb-3" />
-                  <h3 className="font-semibold text-gray-800 mb-2">{benefit.title}</h3>
-                  <p className="text-sm text-gray-600">{benefit.description}</p>
+                  <benefit.icon className="w-8 h-8 text-cyan-400 mb-3" />
+                  <h3 className="font-semibold text-white mb-2">{benefit.title}</h3>
+                  <p className="text-sm text-slate-300">{benefit.description}</p>
                 </motion.div>
               ))}
             </div>
@@ -211,25 +211,25 @@ export function UpgradePage() {
             {/* QR Code Section */}
             {upgradeStatus === "none" && (
               <motion.div
-                className="bg-gradient-to-br from-cyan-50 to-blue-50 rounded-xl p-8 border-2 border-cyan-200"
+                className="bg-gradient-to-br from-slate-800/50 to-blue-800/50 rounded-xl p-8 border-2 border-cyan-400/30"
                 initial={{ opacity: 0, scale: 0.95 }}
                 animate={{ opacity: 1, scale: 1 }}
                 transition={{ delay: 0.6 }}
               >
                 <div className="text-center mb-6">
-                  <QrCode className="w-12 h-12 text-cyan-500 mx-auto mb-3" />
-                  <h3 className="text-xl font-bold text-gray-800 mb-2">Quét mã QR để thanh toán</h3>
-                  <p className="text-gray-600">Sau khi thanh toán, admin sẽ cấp quyền cho bạn</p>
+                  <QrCode className="w-12 h-12 text-cyan-400 mx-auto mb-3" />
+                  <h3 className="text-xl font-bold text-white mb-2">Quét mã QR để thanh toán</h3>
+                  <p className="text-slate-300">Sau khi thanh toán, admin sẽ cấp quyền cho bạn</p>
                 </div>
                 
                 <div className="flex justify-center mb-6">
-                  <div className="bg-white p-4 rounded-lg shadow-lg">
+                  <div className="bg-slate-900/70 p-4 rounded-lg shadow-lg border border-cyan-400/20">
                     {/* QR Code placeholder - Replace with actual QR code generator */}
-                    <div className="w-64 h-64 bg-gray-200 rounded-lg flex items-center justify-center border-2 border-dashed border-gray-300">
+                    <div className="w-64 h-64 bg-slate-800 rounded-lg flex items-center justify-center border-2 border-dashed border-cyan-400/30">
                       <div className="text-center">
-                        <QrCode className="w-24 h-24 text-gray-400 mx-auto mb-2" />
-                        <p className="text-sm text-gray-500">QR Code sẽ được tạo tại đây</p>
-                        <p className="text-xs text-gray-400 mt-1">User ID: {user?.id}</p>
+                        <QrCode className="w-24 h-24 text-cyan-400/50 mx-auto mb-2" />
+                        <p className="text-sm text-slate-400">QR Code sẽ được tạo tại đây</p>
+                        <p className="text-xs text-slate-500 mt-1">User ID: {user?.id}</p>
                       </div>
                     </div>
                   </div>
@@ -245,7 +245,7 @@ export function UpgradePage() {
                   >
                     {loading ? "Đang xử lý..." : "Xác nhận đã thanh toán"}
                   </motion.button>
-                  <p className="text-xs text-gray-500 mt-2">
+                  <p className="text-xs text-slate-400 mt-2">
                     Nhấn nút này sau khi bạn đã quét QR và thanh toán thành công
                   </p>
                 </div>

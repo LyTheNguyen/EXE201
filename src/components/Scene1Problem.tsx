@@ -344,14 +344,7 @@ export function Scene1Problem() {
           </div>
         </div>
 
-        <motion.div
-          className="mt-12 text-blue-200 opacity-60 text-center"
-          animate={{ y: [0, 10, 0] }}
-          transition={{ duration: 2, repeat: Infinity }}
-        >
-          <p>↓ Cuộn xuống để khám phá giải pháp ↓</p>
-        </motion.div>
-      </div>
+        </div>
     </section>
   );
 }

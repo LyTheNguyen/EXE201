@@ -194,29 +194,29 @@ export function UserProfilePage() {
       transition={{ duration: 0.5 }}
     >
       <div className="max-w-4xl mx-auto px-6 sm:px-12 py-10 sm:py-12">
-        <div className="mb-8 flex justify-between items-center">
+        <div className="mb-8 flex justify-between items-center flex-nowrap gap-4" style={{marginTop: '8rem !important'}}>
           <motion.button
             onClick={() => navigate("/")}
-            className="inline-flex items-center gap-2 px-6 py-2.5 bg-white/10 hover:bg-white/20 text-cyan-100 hover:text-white rounded-lg transition-all duration-200 shadow-sm hover:shadow-cyan-400/40 border border-white/20"
+            className="inline-flex items-center gap-2 px-6 py-3 bg-gradient-to-r from-blue-600 to-blue-400 hover:from-blue-500 hover:to-blue-300 text-white rounded-xl transition-all duration-200 shadow-lg shadow-blue-500/60 border-2 border-blue-400 font-bold"
             whileHover={{ scale: 1.02, x: -2 }}
             whileTap={{ scale: 0.98 }}
           >
-            <ArrowLeft className="w-5 h-5" />
-            <span className="font-medium">Quay lại trang chủ</span>
+            <ArrowLeft className="w-5 h-5" style={{display: 'inline-block', verticalAlign: 'middle'}} />
+            <span className="font-semibold" style={{display: 'inline-block', verticalAlign: 'middle'}}>Quay lại trang chủ</span>
           </motion.button>
           <motion.button
             onClick={handleLogout}
-            className="inline-flex items-center gap-2 px-6 py-2.5 bg-red-500 hover:bg-red-600 text-white rounded-lg transition-all duration-200 shadow-lg shadow-red-500/40 border border-red-500/30"
+            className="inline-flex items-center gap-2 px-6 py-3 bg-red-600 hover:bg-red-500 text-white rounded-xl transition-all duration-200 shadow-lg shadow-red-500/60 border-2 border-red-500 font-bold"
             whileHover={{ scale: 1.02, x: 2 }}
             whileTap={{ scale: 0.98 }}
           >
-            <LogOut className="w-5 h-5" />
-            <span className="font-medium">Đăng xuất</span>
+            <LogOut className="w-5 h-5" style={{display: 'inline-block', verticalAlign: 'middle'}} />
+            <span className="font-semibold" style={{display: 'inline-block', verticalAlign: 'middle'}}>Đăng xuất</span>
           </motion.button>
         </div>
 
         <motion.div
-          className="bg-slate-900/70 backdrop-blur-xl border border-cyan-400/60 rounded-2xl shadow-2xl overflow-hidden"
+          className="-translate-y-10 bg-slate-900/70 backdrop-blur-xl border border-cyan-400/60 rounded-2xl shadow-2xl overflow-hidden"
           initial={{ y: 20, opacity: 0 }}
           animate={{ y: 0, opacity: 1 }}
           transition={{ duration: 0.5, delay: 0.2 }}
@@ -275,12 +275,12 @@ export function UserProfilePage() {
             
             <div className="space-y-4 md:space-y-5 mb-8">
               <motion.div
-                className="p-4 bg-slate-900/60 rounded-lg border border-slate-700"
+                className="p-6 bg-slate-900/70 rounded-xl border border-cyan-400/30 shadow-lg shadow-cyan-500/10"
                 initial={{ x: -20, opacity: 0 }}
                 animate={{ x: 0, opacity: 1 }}
                 transition={{ delay: 0.4 }}
               >
-                <div className="flex items-center justify-between mb-1">
+                <div className="flex items-center justify-between mb-2">
                   <label className="text-sm font-medium text-slate-300 block">Tên người dùng</label>
                   {!isEditingName && (
                     <button
@@ -327,7 +327,7 @@ export function UserProfilePage() {
 
               <div className="grid gap-4 md:gap-5 md:grid-cols-2">
                 <motion.div
-                  className="p-4 bg-slate-900/60 rounded-lg border border-slate-700"
+                  className="p-6 bg-slate-900/70 rounded-xl border border-cyan-400/30 shadow-lg shadow-cyan-500/10"
                   initial={{ x: -20, opacity: 0 }}
                   animate={{ x: 0, opacity: 1 }}
                   transition={{ delay: 0.5 }}
@@ -337,7 +337,7 @@ export function UserProfilePage() {
                 </motion.div>
 
                 <motion.div
-                  className="p-4 bg-slate-900/60 rounded-lg border border-slate-700"
+                  className="p-6 bg-slate-900/70 rounded-xl border border-cyan-400/30 shadow-lg shadow-cyan-500/10"
                   initial={{ x: -20, opacity: 0 }}
                   animate={{ x: 0, opacity: 1 }}
                   transition={{ delay: 0.6 }}
@@ -349,12 +349,12 @@ export function UserProfilePage() {
 
               {/* Upgrade Status */}
               <motion.div
-                className={`p-4 rounded-lg border ${
+                className={`p-6 rounded-xl border ${
                   user.hasMapAccess && user.upgradeStatus === 'approved'
                     ? 'bg-green-500/10 border-green-400/70'
                     : user.upgradeStatus === 'pending'
                     ? 'bg-yellow-500/10 border-yellow-400/70'
-                    : 'bg-slate-900/60 border-slate-700'
+                    : 'bg-slate-900/70 border-cyan-400/30 shadow-lg shadow-cyan-500/10'
                 }`}
                 initial={{ x: -20, opacity: 0 }}
                 animate={{ x: 0, opacity: 1 }}

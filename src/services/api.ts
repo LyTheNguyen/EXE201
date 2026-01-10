@@ -19,8 +19,13 @@ export interface AuthResponse {
     id: string;
     name: string;
     email: string;
+    img?: string;
   };
   error?: string;
+}
+
+export interface GoogleCredentialRequest {
+  credential: string;
 }
 
 const getAuthHeaders = () => {
@@ -77,6 +82,33 @@ export const authAPI = {
         };
       }
       
+      return await response.json();
+    } catch (error: any) {
+      return {
+        success: false,
+        message: error.message || 'Không thể kết nối đến server. Vui lòng kiểm tra backend có đang chạy không.',
+      };
+    }
+  },
+
+  googleSignInWithCredential: async (data: GoogleCredentialRequest): Promise<AuthResponse> => {
+    try {
+      const response = await fetch(`${API_URL}/auth/google`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(data),
+      });
+
+      if (!response.ok) {
+        const errorData = await response.json().catch(() => ({ message: 'Network error' }));
+        return {
+          success: false,
+          message: errorData.message || `Server error: ${response.status}`,
+        };
+      }
+
       return await response.json();
     } catch (error: any) {
       return {
@@ -176,6 +208,13 @@ export const userAPI = {
         },
         body: formData,
       });
+
+      if (response.status === 401) {
+        return {
+          success: false,
+          message: 'Phiên đăng nhập đã hết hạn hoặc token không hợp lệ. Vui lòng đăng nhập lại.',
+        };
+      }
 
       if (!response.ok) {
         const errorData = await response.json().catch(() => ({ message: 'Network error' }));

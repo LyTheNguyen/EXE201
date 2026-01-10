@@ -6,8 +6,12 @@ require('dotenv').config();
 const app = express();
 
 // Middleware
-app.use(cors());
+app.use(cors({
+  origin: 'http://localhost:3000',
+  credentials: true
+}));
 app.use(express.json());
+
 // Serve uploaded files (avatars, etc.) from the local uploads folder
 // The files are saved under backend/uploads, so we expose /uploads -> ./uploads
 app.use('/uploads', express.static('uploads'));

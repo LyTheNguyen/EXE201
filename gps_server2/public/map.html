@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <title>Bản đồ GPS ESP32</title>
+    <link
+      rel="stylesheet"
+      href="https://unpkg.com/leaflet/dist/leaflet.css"
+    />
+    <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
+    <style>
+      #map {
+        height: 100vh;
+      }
+    </style>
+  </head>
+  <body>
+    <div id="map"></div>
+
+    <script>
+      // ===== Vị trí mặc định (lúc mới chạy) =====
+      const defaultLatLng = [10.0, 105.0];
+
+      // ===== Khởi tạo bản đồ =====
+      const map = L.map("map").setView(defaultLatLng, 13);
+      L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
+        maxZoom: 19,
+      }).addTo(map);
+
+      // Danh sách marker hiện tại trên bản đồ
+      let markers = [];
+
+      // Bảng màu cho các điểm nước (xoay vòng)
+      const markerColors = [
+        "#1d4ed8", // xanh dương đậm
+        "#16a34a", // xanh lá
+        "#dc2626", // đỏ
+        "#eab308", // vàng
+        "#7c3aed", // tím
+        "#0d9488", // teal
+      ];
+
+      // ===== Hàm cập nhật vị trí =====
+      async function updatePosition() {
+        try {
+          const res = await fetch("/gps");
+          const data = await res.json();
+
+          // Xóa tất cả marker cũ
+          markers.forEach((m) => map.removeLayer(m));
+          markers = [];
+
+          if (Array.isArray(data.points) && data.points.length > 0) {
+            let lastPoint = null;
+
+            data.points.forEach((p, index) => {
+              if (p.lat === undefined || p.lng === undefined) return;
+
+              const color = markerColors[index % markerColors.length];
+
+              const isLast = index === data.points.length - 1;
+
+              let marker;
+              if (isLast) {
+                // Điểm mới nhất: dùng marker icon mặc định
+                marker = L.marker([p.lat, p.lng]).addTo(map);
+              } else {
+                // Các điểm trước đó: chấm tròn nhỏ có màu
+                marker = L.circleMarker([p.lat, p.lng], {
+                  radius: 6,
+                  color: color,
+                  fillColor: color,
+                  fillOpacity: 0.9,
+                  weight: 1,
+                }).addTo(map);
+              }
+
+              const latStr = Number(p.lat).toFixed(6);
+              const lngStr = Number(p.lng).toFixed(6);
+
+              const distStr = Number(p.dist).toFixed(1);
+
+              const rows = `
+                <tr><td><b>Lat</b></td><td>${latStr}</td></tr>
+                <tr><td><b>Lng</b></td><td>${lngStr}</td></tr>
+                <tr><td><b>Khoảng cách</b></td><td>${distStr} cm</td></tr>
+              `;
+
+              const popupHtml = `
+                <div style="font-size: 12px;">
+                  <table>
+                    <tbody>
+                      ${rows}
+                    </tbody>
+                  </table>
+                </div>
+              `;
+
+              // Popup dạng bảng, chỉ hiện khi click
+              marker.bindPopup(popupHtml);
+
+              markers.push(marker);
+              lastPoint = p;
+            });
+
+            // Đưa map về điểm cuối cùng (mới nhất)
+            if (lastPoint) {
+              map.setView([lastPoint.lat, lastPoint.lng]);
+            }
+
+            console.log("📡 Các điểm đang hiển thị:", data.points);
+          } else {
+            // Không có điểm nào → đưa map về vị trí mặc định
+            map.setView(defaultLatLng, 13);
+            console.log("❌ Không có điểm nước nào trong vòng 1 giờ");
+          }
+        } catch (err) {
+          console.error("⚠️ Lỗi khi cập nhật:", err);
+        }
+      }
+
+      // Cập nhật mỗi 5 giây
+      setInterval(updatePosition, 5000);
+    </script>
+  </body>
+</html>

@@ -4,6 +4,7 @@ import { LoginPage } from "./pages/LoginPage";
 import { UserProfilePage } from "./pages/UserProfilePage";
 import { UpgradePage } from "./pages/UpgradePage";
 import { AdminDashboardPage } from "./pages/AdminDashboardPage";
+import { FullscreenMapPage } from "./pages/FullscreenMapPage";
 
 export default function App() {
   return (
@@ -13,6 +14,7 @@ export default function App() {
       <Route path="/profile" element={<UserProfilePage />} />
       <Route path="/upgrade" element={<UpgradePage />} />
       <Route path="/admin/dashboard" element={<AdminDashboardPage />} />
+      <Route path="/fullscreen-map" element={<FullscreenMapPage />} />
     </Routes>
   );
 }

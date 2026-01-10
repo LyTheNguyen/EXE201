@@ -1,8 +1,14 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { motion } from "motion/react";
 import { authAPI } from "../services/api";
 import "../components/Login.css";
+
+declare global {
+  interface Window {
+    google?: any;
+  }
+}
 
 export function LoginPage() {
   const [isSignUp, setIsSignUp] = useState(false);
@@ -10,6 +16,75 @@ export function LoginPage() {
   const [error, setError] = useState(null as string | null);
   const [success, setSuccess] = useState(null as string | null);
   const navigate = useNavigate();
+
+  const googleClientId = (import.meta as any).env?.VITE_GOOGLE_CLIENT_ID;
+
+  useEffect(() => {
+    const clientId = googleClientId;
+    if (!clientId) {
+      return;
+    }
+
+    const init = () => {
+      if (!window.google?.accounts?.id) return;
+
+      window.google.accounts.id.initialize({
+        client_id: clientId,
+        callback: async (response: any) => {
+          try {
+            setLoading(true);
+            setError(null);
+            setSuccess(null);
+
+            const result = await authAPI.googleSignInWithCredential({
+              credential: response.credential,
+            });
+
+            if (result.success && result.token) {
+              localStorage.setItem("token", result.token);
+              localStorage.setItem("user", JSON.stringify(result.user));
+              window.dispatchEvent(new Event("userLogin"));
+              setSuccess("Đăng nhập bằng Google thành công! Đang chuyển hướng...");
+              setTimeout(() => navigate("/"), 800);
+            } else {
+              setError(result.message || "Đăng nhập bằng Google thất bại");
+            }
+          } catch (err: any) {
+            setError(err?.message || "Đăng nhập bằng Google thất bại");
+          } finally {
+            setLoading(false);
+          }
+        },
+      });
+
+      const signUpEl = document.getElementById("googleSignUpBtn");
+      if (signUpEl) {
+        signUpEl.innerHTML = "";
+        window.google.accounts.id.renderButton(signUpEl, {
+          theme: "outline",
+          size: "large",
+          type: "standard",
+          shape: "pill",
+          text: "signup_with",
+        });
+      }
+
+      const signInEl = document.getElementById("googleSignInBtn");
+      if (signInEl) {
+        signInEl.innerHTML = "";
+        window.google.accounts.id.renderButton(signInEl, {
+          theme: "outline",
+          size: "large",
+          type: "standard",
+          shape: "pill",
+          text: "signin_with",
+        });
+      }
+    };
+
+    const timer = window.setTimeout(init, 0);
+    return () => window.clearTimeout(timer);
+  }, [navigate]);
 
   // Form data states
   const [signUpData, setSignUpData] = useState({
@@ -155,15 +230,15 @@ export function LoginPage() {
               Create Account
             </motion.h1>
               <div className="social-container">
-                <motion.a 
-                  href="#" 
-                  className="social" 
-                  onClick={(e) => e.preventDefault()}
-                  whileHover={{ scale: 1.1, y: -2 }}
-                  whileTap={{ scale: 0.95 }}
-                >
-                  <i>G+</i>
-                </motion.a>
+                {googleClientId ? (
+                  <div id="googleSignUpBtn" />
+                ) : (
+                  <div style={{ fontSize: 12, opacity: 0.8, textAlign: "center" }}>
+                    Google sign-in chưa được cấu hình.
+                    <br />
+                    Tạo file <code>.env</code> ở thư mục gốc và set <code>VITE_GOOGLE_CLIENT_ID</code>.
+                  </div>
+                )}
               </div>
               <motion.span
                 initial={{ opacity: 0 }}
@@ -261,15 +336,15 @@ export function LoginPage() {
                 Sign in
               </motion.h1>
               <div className="social-container">
-                <motion.a 
-                  href="#" 
-                  className="social" 
-                  onClick={(e) => e.preventDefault()}
-                  whileHover={{ scale: 1.1, y: -2 }}
-                  whileTap={{ scale: 0.95 }}
-                >
-                  <i>G+</i>
-                </motion.a>
+                {googleClientId ? (
+                  <div id="googleSignInBtn" />
+                ) : (
+                  <div style={{ fontSize: 12, opacity: 0.8, textAlign: "center" }}>
+                    Google sign-in chưa được cấu hình.
+                    <br />
+                    Tạo file <code>.env</code> ở thư mục gốc và set <code>VITE_GOOGLE_CLIENT_ID</code>.
+                  </div>
+                )}
               </div>
               <motion.span
                 initial={{ opacity: 0 }}

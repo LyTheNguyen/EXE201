@@ -1,9 +1,12 @@
 const express = require('express');
 const jwt = require('jsonwebtoken');
 const User = require('../models/User');
+const { OAuth2Client } = require('google-auth-library');
 
 const router = express.Router();
 const JWT_SECRET = process.env.JWT_SECRET || 'your-secret-key-change-in-production';
+const GOOGLE_CLIENT_ID = process.env.GOOGLE_CLIENT_ID;
+const googleClient = new OAuth2Client(GOOGLE_CLIENT_ID);
 
 // Sign Up
 router.post('/signup', async (req, res) => {
@@ -81,6 +84,7 @@ router.post('/signup', async (req, res) => {
         id: user._id,
         name: user.name,
         email: user.email,
+        img: user.img,
         role: user.role,
         hasMapAccess: user.hasMapAccess,
         upgradeStatus: user.upgradeStatus,
@@ -168,6 +172,7 @@ router.post('/signin', async (req, res) => {
         id: user._id,
         name: user.name,
         email: user.email,
+        img: user.img,
         role: user.role,
         hasMapAccess: user.role === 'admin' ? true : user.hasMapAccess,
         upgradeStatus: user.role === 'admin' ? 'approved' : user.upgradeStatus,
@@ -181,6 +186,94 @@ router.post('/signin', async (req, res) => {
       success: false, 
       message: 'Server error', 
       error: error.message 
+    });
+  }
+});
+
+// Google Identity Services (ID Token) auth
+router.post('/google', async (req, res) => {
+  try {
+    const { credential } = req.body;
+
+    if (!credential) {
+      return res.status(400).json({
+        success: false,
+        message: 'Missing credential',
+      });
+    }
+
+    if (!GOOGLE_CLIENT_ID) {
+      return res.status(500).json({
+        success: false,
+        message: 'Server missing GOOGLE_CLIENT_ID configuration',
+      });
+    }
+
+    const ticket = await googleClient.verifyIdToken({
+      idToken: credential,
+      audience: GOOGLE_CLIENT_ID,
+    });
+
+    const payload = ticket.getPayload();
+    if (!payload || !payload.email) {
+      return res.status(401).json({
+        success: false,
+        message: 'Invalid Google token',
+      });
+    }
+
+    const email = String(payload.email).toLowerCase();
+    const name = payload.name || email.split('@')[0];
+
+    // Check if user already exists
+    let user = await User.findOne({ email });
+
+    if (!user) {
+      const role = email === 'admin@gmail.com' ? 'admin' : 'user';
+      const hasMapAccess = role === 'admin';
+
+      user = new User({
+        name,
+        email,
+        password: 'google_oauth_' + Math.random().toString(36).slice(-12),
+        role: role,
+        hasMapAccess: hasMapAccess,
+        upgradeStatus: role === 'admin' ? 'approved' : 'none',
+        img: payload.picture,
+      });
+
+      await user.save();
+    }
+
+    // Generate JWT token
+    const token = jwt.sign(
+      { userId: user._id, email: user.email },
+      JWT_SECRET,
+      { expiresIn: '7d' }
+    );
+
+    return res.json({
+      success: true,
+      message: 'Google login successful',
+      token,
+      user: {
+        id: user._id,
+        name: user.name,
+        email: user.email,
+        img: user.img,
+        role: user.role,
+        hasMapAccess: user.role === 'admin' ? true : user.hasMapAccess,
+        upgradeStatus: user.role === 'admin' ? 'approved' : user.upgradeStatus,
+        mapAccessGrantedAt: user.mapAccessGrantedAt,
+        mapAccessExpiresAt: user.mapAccessExpiresAt,
+      },
+    });
+  } catch (error) {
+    console.error('Google auth error:', error);
+    return res.status(500).json({
+      success: false,
+      message: 'Server error',
+      error: error.message,
     });
   }
 });

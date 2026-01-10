@@ -20,6 +20,8 @@ export function AdminDashboardPage() {
   const [users, setUsers] = useState<User[]>([]);
   const [pendingUsers, setPendingUsers] = useState<User[]>([]);
   const [loading, setLoading] = useState(true);
+  const [filterStatus, setFilterStatus] = useState<string>('all');
+  const [searchEmail, setSearchEmail] = useState<string>('');
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -161,6 +163,17 @@ export function AdminDashboardPage() {
     }
   };
 
+  // Filter users based on status and email
+  const filteredUsers = users.filter(user => {
+    const matchesStatus = filterStatus === 'all' || 
+      (filterStatus === 'approved' && user.upgradeStatus === 'approved') ||
+      (filterStatus === 'none' && user.upgradeStatus === 'none');
+    
+    const matchesEmail = searchEmail === '' || user.email.toLowerCase().includes(searchEmail.toLowerCase());
+    
+    return matchesStatus && matchesEmail;
+  });
+
   if (loading) {
     return (
       <div className="min-h-screen bg-gradient-to-b from-slate-800 via-blue-900 to-cyan-900 pt-20 flex items-center justify-center">
@@ -182,12 +195,13 @@ export function AdminDashboardPage() {
       <div className="max-w-7xl mx-auto px-6 py-12">
         <motion.button
           onClick={() => navigate("/")}
-          className="mb-6 flex items-center gap-2 px-4 py-2 bg-white/10 hover:bg-white/20 text-cyan-100 hover:text-white rounded-lg transition-all duration-200 shadow-sm hover:shadow-cyan-400/40 border border-white/20"
+          className="mb-8 flex items-center gap-2 px-6 py-3 bg-gradient-to-r from-blue-600 to-blue-400 hover:from-blue-500 hover:to-blue-300 text-white rounded-xl transition-all duration-200 shadow-lg shadow-blue-500/60 border-2 border-blue-400 font-bold"
+          style={{marginTop: '8rem !important'}}
           whileHover={{ scale: 1.02, x: -2 }}
           whileTap={{ scale: 0.98 }}
         >
-          <ArrowLeft className="w-5 h-5" />
-          <span className="font-medium">Quay lại trang chủ</span>
+          <ArrowLeft className="w-5 h-5" style={{display: 'inline-block', verticalAlign: 'middle'}} />
+          <span className="font-semibold" style={{display: 'inline-block', verticalAlign: 'middle'}}>Quay lại trang chủ</span>
         </motion.button>
 
         <motion.div
@@ -258,9 +272,58 @@ export function AdminDashboardPage() {
           transition={{ duration: 0.5, delay: 0.3 }}
         >
           <div className="p-6 border-b border-white/10">
-            <div className="flex items-center gap-3">
-              <Users className="w-6 h-6 text-cyan-400" />
-              <h2 className="text-2xl font-bold text-white">Danh sách người dùng</h2>
+            <div className="flex items-center justify-between">
+              <div className="flex items-center gap-3">
+                <Users className="w-6 h-6 text-cyan-400" />
+                <h2 className="text-2xl font-bold text-white">Danh sách người dùng</h2>
+                <span className="text-sm text-slate-400">({filteredUsers.length} kết quả)</span>
+              </div>
+            </div>
+          </div>
+
+          {/* Filter Bar */}
+          <div className="p-6 border-b border-white/10 bg-slate-800/50">
+            <div className="flex flex-col lg:flex-row gap-6">
+              {/* Status Filter */}
+              <div className="flex-1">
+                <label className="block text-sm font-medium text-slate-300 mb-2">Lọc theo trạng thái</label>
+                <select
+                  value={filterStatus}
+                  onChange={(e) => setFilterStatus(e.target.value)}
+                  className="w-full px-4 py-2 bg-slate-700 border border-slate-600 rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-cyan-500 focus:border-transparent"
+                >
+                  <option value="all">Tất cả</option>
+                  <option value="approved">Đã cấp quyền</option>
+                  <option value="none">Chưa nâng cấp</option>
+                </select>
+              </div>
+
+              {/* Email Search */}
+              <div className="flex-1">
+                <label className="block text-sm font-medium text-slate-300 mb-2">Tìm kiếm theo email</label>
+                <input
+                  type="email"
+                  value={searchEmail}
+                  onChange={(e) => setSearchEmail(e.target.value)}
+                  placeholder="Nhập email để tìm kiếm..."
+                  className="w-full px-4 py-2 pl-10 bg-slate-700 border border-slate-600 rounded-lg text-white placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-cyan-500 focus:border-transparent"
+                />
+              </div>
+
+              {/* Clear Filters Button */}
+              <div className="flex items-end">
+                <motion.button
+                  onClick={() => {
+                    setFilterStatus('all');
+                    setSearchEmail('');
+                  }}
+                  className="px-6 py-2 bg-gradient-to-r from-red-500 to-orange-500 hover:from-red-600 hover:to-orange-600 text-white rounded-lg transition-all duration-200 shadow-lg shadow-red-500/60 border-2 border-red-400 font-bold"
+                  whileHover={{ scale: 1.05 }}
+                  whileTap={{ scale: 0.95 }}
+                >
+                  Xóa bộ lọc
+                </motion.button>
+              </div>
             </div>
           </div>
 
@@ -289,7 +352,7 @@ export function AdminDashboardPage() {
                 </tr>
               </thead>
               <tbody className="bg-slate-900/60 divide-y divide-slate-800">
-                {users.map((u) => (
+                {filteredUsers.map((u) => (
                   <tr key={u.id} className="hover:bg-slate-800/80">
                     <td className="px-6 py-4 whitespace-nowrap text-center">
                       <div className="text-sm font-medium text-white">{u.name}</div>

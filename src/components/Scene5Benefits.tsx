@@ -186,7 +186,10 @@ export function Scene5Benefits() {
             whileHover={{ scale: 1.05 }}
             whileTap={{ scale: 0.95 }}
           >
-            <button className="group bg-gradient-to-r from-cyan-500 to-blue-500 hover:from-cyan-600 hover:to-blue-600 text-white px-10 py-4 rounded-full transition-all shadow-lg shadow-cyan-500/50 hover:shadow-xl hover:shadow-cyan-500/70">
+            <button 
+              onClick={() => window.open("https://www.facebook.com/profile.php?id=61583161011775", "_blank")}
+              className="group bg-gradient-to-r from-cyan-500 to-blue-500 hover:from-cyan-600 hover:to-blue-600 text-white px-10 py-4 rounded-full transition-all shadow-lg shadow-cyan-500/50 hover:shadow-xl hover:shadow-cyan-500/70"
+            >
               <span className="flex items-center gap-3">
                 <span className="text-lg">Tham gia mạng lưới</span>
                 <motion.div

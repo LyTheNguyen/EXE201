@@ -8,6 +8,7 @@ interface UserInfo {
   name: string;
   email: string;
   role?: string;
+  img?: string;
 }
 
 export function Header() {
@@ -67,9 +68,6 @@ export function Header() {
           />
           <div>
             <h1 className="text-white text-lg">FloodSense</h1>
-            <p className="text-cyan-400 text-xs">
-              Dự án Thủy Tỉnh - EXE201 - G01.04
-            </p>
           </div>
         </Link>
 
@@ -104,7 +102,16 @@ export function Header() {
                 to="/profile"
                 className="flex items-center gap-2 px-4 py-2 bg-cyan-500 hover:bg-cyan-600 text-white rounded-lg transition-colors font-medium"
               >
-                <User className="w-4 h-4" />
+                {user.img ? (
+                  <img
+                    src={user.img}
+                    alt={user.name}
+                    className="w-5 h-5 rounded-full object-cover bg-white/20"
+                    referrerPolicy="no-referrer"
+                  />
+                ) : (
+                  <User className="w-4 h-4" />
+                )}
                 <span>{user.name}</span>
               </Link>
             </div>

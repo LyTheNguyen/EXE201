@@ -47,6 +47,39 @@ const userSchema = new mongoose.Schema({
   img: {
     type: String,
   },
+  money: {
+    type: Number,
+    default: 0,
+    min: 0,
+  },
+  transactions: [{
+    type: {
+      type: String,
+      enum: ['deposit', 'purchase'],
+      default: 'deposit'
+    },
+    amount: {
+      type: Number,
+      required: true
+    },
+    orderCode: {
+      type: String,
+      required: true
+    },
+    status: {
+      type: String,
+      enum: ['pending', 'completed', 'failed'],
+      default: 'pending'
+    },
+    createdAt: {
+      type: Date,
+      default: Date.now
+    }
+  }],
+  mapAccessExpiry: {
+    type: Date,
+    default: null
+  },
   createdAt: {
     type: Date,
     default: Date.now,

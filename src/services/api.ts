@@ -1,4 +1,4 @@
-const API_URL = (import.meta as any).env?.VITE_API_URL || 'http://localhost:5000/api';
+const API_URL = (import.meta as any).env?.VITE_API_URL || 'https://floodsense-backend-z4z0.onrender.com/api';
 
 export interface SignUpData {
   name: string;
@@ -335,6 +335,81 @@ export const adminAPI = {
     try {
       const response = await fetch(`${API_URL}/admin/users/${userId}/revoke-map-access`, {
         method: 'POST',
+        headers: getAuthHeaders(),
+      });
+      
+      if (!response.ok) {
+        const errorData = await response.json().catch(() => ({ message: 'Network error' }));
+        return {
+          success: false,
+          message: errorData.message || `Server error: ${response.status}`,
+        };
+      }
+      
+      return await response.json();
+    } catch (error: any) {
+      return {
+        success: false,
+        message: error.message || 'Không thể kết nối đến server.',
+      };
+    }
+  },
+};
+
+export const paymentAPI = {
+  createPaymentLink: async (data: { amount: number; description?: string }) => {
+    try {
+      const response = await fetch(`${API_URL}/payment/create-payment-link`, {
+        method: 'POST',
+        headers: getAuthHeaders(),
+        body: JSON.stringify(data),
+      });
+      
+      if (!response.ok) {
+        const errorData = await response.json().catch(() => ({ message: 'Network error' }));
+        return {
+          success: false,
+          message: errorData.message || `Server error: ${response.status}`,
+        };
+      }
+      
+      return await response.json();
+    } catch (error: any) {
+      return {
+        success: false,
+        message: error.message || 'Không thể kết nối đến server.',
+      };
+    }
+  },
+
+  checkPaymentStatus: async (orderCode: string) => {
+    try {
+      const response = await fetch(`${API_URL}/payment/check-status/${orderCode}`, {
+        method: 'GET',
+        headers: getAuthHeaders(),
+      });
+      
+      if (!response.ok) {
+        const errorData = await response.json().catch(() => ({ message: 'Network error' }));
+        return {
+          success: false,
+          message: errorData.message || `Server error: ${response.status}`,
+        };
+      }
+      
+      return await response.json();
+    } catch (error: any) {
+      return {
+        success: false,
+        message: error.message || 'Không thể kết nối đến server.',
+      };
+    }
+  },
+
+  getUserInfo: async () => {
+    try {
+      const response = await fetch(`${API_URL}/payment/user-info`, {
+        method: 'GET',
         headers: getAuthHeaders(),
       });
       

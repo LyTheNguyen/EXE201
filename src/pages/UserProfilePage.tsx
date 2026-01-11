@@ -1,8 +1,8 @@
 import { useState, useEffect, useRef } from "react";
 import { useNavigate } from "react-router-dom";
 import { motion } from "motion/react";
-import { LogOut, User, Mail, ArrowLeft, Clock, CheckCircle, Camera, Edit3 } from "lucide-react";
-import { upgradeAPI, userAPI } from "../services/api";
+import { LogOut, User, Mail, ArrowLeft, Clock, CheckCircle, Camera, Edit3, Wallet } from "lucide-react";
+import { upgradeAPI, userAPI, paymentAPI } from "../services/api";
 
 interface UserInfo {
   id: string;
@@ -13,6 +13,14 @@ interface UserInfo {
   upgradeStatus?: string;
   mapAccessGrantedAt?: string;
   mapAccessExpiresAt?: string;
+  money?: number;
+  transactions?: Array<{
+    type: string;
+    amount: number;
+    orderCode: string;
+    status: string;
+    createdAt: string;
+  }>;
 }
 
 export function UserProfilePage() {
@@ -52,17 +60,24 @@ export function UserProfilePage() {
 
   const fetchUserStatus = async () => {
     try {
-      const response = await upgradeAPI.getStatus();
-      if (response.success) {
+      // Lấy thông tin upgrade status
+      const upgradeResponse = await upgradeAPI.getStatus();
+      
+      // Lấy thông tin tiền và transactions
+      const paymentResponse = await paymentAPI.getUserInfo();
+      
+      if (upgradeResponse.success || paymentResponse.success) {
         const userStr = localStorage.getItem("user");
         if (userStr) {
           const currentUser = JSON.parse(userStr);
           const updatedUser = {
             ...currentUser,
-            hasMapAccess: response.hasMapAccess || false,
-            upgradeStatus: response.upgradeStatus || 'none',
-            mapAccessExpiresAt: response.mapAccessExpiresAt,
-            mapAccessGrantedAt: response.mapAccessGrantedAt,
+            hasMapAccess: upgradeResponse.hasMapAccess || false,
+            upgradeStatus: upgradeResponse.upgradeStatus || 'none',
+            mapAccessExpiresAt: upgradeResponse.mapAccessExpiresAt,
+            mapAccessGrantedAt: upgradeResponse.mapAccessGrantedAt,
+            money: paymentResponse.data?.money || 0,
+            transactions: paymentResponse.data?.transactions || [],
           };
           localStorage.setItem("user", JSON.stringify(updatedUser));
           setUser(updatedUser);
@@ -346,6 +361,37 @@ export function UserProfilePage() {
                   <p className="text-xs md:text-sm text-cyan-200 font-mono break-all leading-relaxed">{user.id}</p>
                 </motion.div>
               </div>
+
+              {/* Money Balance */}
+              <motion.div
+                className="p-6 bg-gradient-to-r from-yellow-500/10 to-orange-500/10 rounded-xl border border-yellow-400/30 shadow-lg shadow-yellow-500/10"
+                initial={{ x: -20, opacity: 0 }}
+                animate={{ x: 0, opacity: 1 }}
+                transition={{ delay: 0.65 }}
+              >
+                <div className="flex items-center justify-between">
+                  <div>
+                    <label className="text-sm font-medium text-slate-300 mb-1 block flex items-center gap-2">
+                      <Clock className="w-4 h-4" />
+                      Thời gian sử dụng bản đồ
+                    </label>
+                    <p className="text-2xl font-bold text-cyan-300">
+                      {timeRemaining || "Không có"}
+                    </p>
+                    {user.mapAccessExpiresAt && (
+                      <p className="text-xs text-slate-400 mt-1">
+                        Hết hạn: {new Date(user.mapAccessExpiresAt).toLocaleDateString('vi-VN')}
+                      </p>
+                    )}
+                  </div>
+                  <button
+                    onClick={() => navigate("/upgrade")}
+                    className="px-4 py-2 bg-gradient-to-r from-cyan-500 to-blue-500 hover:from-cyan-600 hover:to-blue-600 text-white rounded-lg text-sm font-medium transition-all"
+                  >
+                    Gia hạn
+                  </button>
+                </div>
+              </motion.div>
 
               {/* Upgrade Status */}
               <motion.div

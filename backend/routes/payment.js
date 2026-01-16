@@ -8,7 +8,7 @@ const { authenticate } = require('../middleware/auth');
 router.post('/create-payment-link', authenticate, async (req, res) => {
   try {
     const { amount, description } = req.body;
-    const userId = req.user.id;
+    const userId = req.user.userId || req.user.id;
 
     console.log('Creating payment link for user:', userId, req.user.email);
 
@@ -201,7 +201,8 @@ router.get('/check-status/:orderCode', authenticate, async (req, res) => {
 // Lấy thông tin user (bao gồm số tiền)
 router.get('/user-info', authenticate, async (req, res) => {
   try {
-    const user = await User.findById(req.user.id).select('-password');
+    const userId = req.user.userId || req.user.id;
+    const user = await User.findById(userId).select('-password');
     res.json({
       success: true,
       data: user

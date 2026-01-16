@@ -217,35 +217,7 @@ export function UpgradePage() {
                 animate={{ opacity: 1, y: 0 }}
               >
                 <p className="text-yellow-200 text-sm">
-                  Bạn chưa nâng cấp tài khoản. Vui lòng quét mã QR để thanh toán.
-                </p>
-              </motion.div>
-            )}
-
-            {upgradeStatus === "pending" && (
-              <motion.div
-                className="mb-8 p-4 bg-blue-500/20 border border-blue-400/30 rounded-lg"
-                initial={{ opacity: 0, y: -10 }}
-                animate={{ opacity: 1, y: 0 }}
-              >
-                <div className="flex items-center justify-between mb-2">
-                  <div className="flex items-center gap-2">
-                    <div className="w-2 h-2 bg-blue-400 rounded-full animate-pulse" />
-                    <p className="text-blue-200 font-medium">
-                      Đã nâng cấp - Đang chờ cấp quyền
-                    </p>
-                  </div>
-                  <motion.button
-                    onClick={fetchUpgradeStatus}
-                    className="px-3 py-1 bg-blue-500 hover:bg-blue-600 text-white text-sm rounded-lg transition-colors"
-                    whileHover={{ scale: 1.05 }}
-                    whileTap={{ scale: 0.95 }}
-                  >
-                    Kiểm tra lại
-                  </motion.button>
-                </div>
-                <p className="text-blue-300 text-sm">
-                  Yêu cầu của bạn đã được gửi. Admin sẽ xem xét và cấp quyền trong thời gian sớm nhất.
+                  Bạn chưa nâng cấp tài khoản. Vui lòng chọn gói và thanh toán để truy cập bản đồ.
                 </p>
               </motion.div>
             )}
@@ -418,24 +390,15 @@ export function UpgradePage() {
                       setPaymentData(null);
                       setSelectedPackage(null);
                     }}
-                    className="mb-4 px-6 py-2 bg-slate-600 hover:bg-slate-700 text-white text-sm rounded-lg transition-colors"
+                    className="px-6 py-2 bg-slate-600 hover:bg-slate-700 text-white text-sm rounded-lg transition-colors"
                     whileHover={{ scale: 1.05 }}
                     whileTap={{ scale: 0.95 }}
                   >
                     ← Chọn gói khác
                   </motion.button>
                   
-                  <motion.button
-                    onClick={handleRequestUpgrade}
-                    disabled={loading}
-                    className="px-8 py-3 bg-gradient-to-r from-cyan-500 to-blue-500 hover:from-cyan-600 hover:to-blue-600 text-white rounded-lg font-medium transition-all disabled:opacity-50"
-                    whileHover={{ scale: 1.05 }}
-                    whileTap={{ scale: 0.95 }}
-                  >
-                    {loading ? "Đang xử lý..." : "Xác nhận đã thanh toán"}
-                  </motion.button>
-                  <p className="text-xs text-slate-400 mt-2">
-                    Nhấn nút này sau khi bạn đã quét QR và thanh toán thành công
+                  <p className="text-sm text-cyan-300 mt-4">
+                    ✨ Sau khi thanh toán thành công, tài khoản sẽ được nâng cấp tự động trong vài giây
                   </p>
                 </div>
               </motion.div>

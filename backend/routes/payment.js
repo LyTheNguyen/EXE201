@@ -43,34 +43,61 @@ router.post('/webhook', async (req, res) => {
   try {
     const webhookData = req.body;
     
-    console.log('Webhook received:', webhookData);
+    console.log('====== WEBHOOK RECEIVED ======');
+    console.log('Full webhook data:', JSON.stringify(webhookData, null, 2));
 
     // PayOS webhook structure: {data: {orderCode, amount, status, ...}, ...}
     const paymentData = webhookData.data || webhookData;
     
+    console.log('Payment data:', JSON.stringify(paymentData, null, 2));
+    console.log('Payment status:', paymentData.status);
+    
     // Xử lý thanh toán thành công
     if (paymentData.status === 'PAID') {
+      console.log('✅ Status is PAID, processing...');
       const orderCode = paymentData.orderCode;
       const amount = paymentData.amount;
       const description = paymentData.description;
       const buyerEmail = paymentData.buyerEmail;
       
+      console.log(`Order: ${orderCode}, Amount: ${amount}, Email: ${buyerEmail}, Desc: ${description}`);
+      
       // Parse userId từ description
       let userId = null;
       if (description && description.startsWith('USER_')) {
-        userId = description.split('_')[1];
+        const parts = description.split('_');
+        if (parts.length > 1) {
+          const potentialId = parts[1];
+          // Kiểm tra xem có phải là valid ObjectId không (24 hex characters)
+          if (potentialId && /^[0-9a-fA-F]{24}$/.test(potentialId)) {
+            userId = potentialId;
+          }
+        }
       }
       
       // Ưu tiên tìm user qua userId
       let user = null;
       if (userId) {
-        user = await User.findById(userId);
+        try {
+          user = await User.findById(userId);
+          console.log(`Found user by ID: ${user ? user.email : 'NOT FOUND'}`);
+        } catch (err) {
+          console.log('Invalid userId format:', userId);
+        }
       }
       
       // Nếu không tìm thấy qua userId, thử qua email
       if (!user && buyerEmail) {
         user = await User.findOne({ email: buyerEmail });
+        console.log(`Found user by email: ${user ? user.email : 'NOT FOUND'}`);
       }
+      
+      if (!user) {
+        console.log('❌ USER NOT FOUND - Cannot process payment');
+        return res.json({ success: true, message: 'User not found' });
+      }
+      
+      console.log(`✅ Processing payment for user: ${user.email} (${user._id})`);
       
       if (user) {
         // Xác định số ngày gia hạn dựa trên số tiền thực nhận
@@ -136,8 +163,11 @@ router.post('/webhook', async (req, res) => {
 
         console.log(`✅ Auto-upgraded: ${user.email} - ${packageName} (${daysToAdd} days) - Expires: ${expiryFormatted}`);
       }
+    } else {
+      console.log(`⚠️ Payment status is not PAID: ${paymentData.status}`);
     }
 
+    console.log('====== WEBHOOK COMPLETED ======');
     res.json({ success: true });
   } catch (error) {
     console.error('Webhook error:', error);

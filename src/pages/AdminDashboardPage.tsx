@@ -13,6 +13,8 @@ interface User {
   upgradeStatus: string;
   upgradeRequestedAt?: string;
   mapAccessGrantedAt?: string;
+  money?: number;
+  transactions?: any[];
 }
 
 export function AdminDashboardPage() {
@@ -213,9 +215,20 @@ export function AdminDashboardPage() {
           <div className="bg-gradient-to-r from-cyan-500/80 to-blue-600/80 p-8">
             <div className="flex items-center gap-4">
               <Shield className="w-12 h-12 text-white" />
-              <div>
+              <div className="flex-1">
                 <h1 className="text-3xl font-bold text-white mb-2">Admin Dashboard</h1>
                 <p className="text-cyan-100">Quản lý người dùng và quyền truy cập</p>
+              </div>
+              <div className="bg-white/10 backdrop-blur-sm rounded-xl p-4 border border-white/20">
+                <div className="text-center">
+                  <p className="text-xs text-cyan-100 mb-1">Tổng số tiền trong hệ thống</p>
+                  <p className="text-2xl font-bold text-white">
+                    {users.reduce((sum, u) => sum + (u.money || 0), 0).toLocaleString()} VNĐ
+                  </p>
+                  <p className="text-xs text-cyan-200 mt-1">
+                    {users.filter(u => (u.money || 0) > 0).length} người dùng đã nạp
+                  </p>
+                </div>
               </div>
             </div>
           </div>
@@ -341,6 +354,9 @@ export function AdminDashboardPage() {
                     Vai trò
                   </th>
                   <th className="px-6 py-3 text-xs font-medium text-slate-300 uppercase tracking-wider text-center">
+                    Số tiền
+                  </th>
+                  <th className="px-6 py-3 text-xs font-medium text-slate-300 uppercase tracking-wider text-center">
                     Quyền Map
                   </th>
                   <th className="px-6 py-3 text-xs font-medium text-slate-300 uppercase tracking-wider text-center">
@@ -368,6 +384,18 @@ export function AdminDashboardPage() {
                       }`}>
                         {u.role === 'admin' ? 'Admin' : 'User'}
                       </span>
+                    </td>
+                    <td className="px-6 py-4 whitespace-nowrap text-center">
+                      <div className="flex flex-col items-center">
+                        <span className="text-sm font-bold text-green-400">
+                          {(u.money || 0).toLocaleString()} VNĐ
+                        </span>
+                        {u.transactions && u.transactions.length > 0 && (
+                          <span className="text-xs text-slate-400 mt-1">
+                            ({u.transactions.length} giao dịch)
+                          </span>
+                        )}
+                      </div>
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap text-center">
                       {u.role === 'admin' ? (

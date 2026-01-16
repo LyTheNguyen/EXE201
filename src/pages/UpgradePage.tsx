@@ -19,40 +19,35 @@ export function UpgradePage() {
       name: 'Gói 2 ngày',
       price: 2000,
       days: 2,
-      description: 'Truy cập bản đồ trong 2 ngày',
-      popular: false
+      description: 'Truy cập bản đồ trong 2 ngày'
     },
     {
       id: '1-day',
       name: 'Gói 1 ngày',
       price: 1000,
       days: 1,
-      description: 'Truy cập bản đồ trong 1 ngày',
-      popular: false
+      description: 'Truy cập bản đồ trong 1 ngày'
     },
     {
       id: '1-month',
       name: 'Gói 1 tháng',
       price: 10000,
       days: 30,
-      description: 'Truy cập bản đồ trong 30 ngày',
-      popular: false
+      description: 'Truy cập bản đồ trong 30 ngày'
     },
     {
       id: '3-months',
       name: 'Gói 3 tháng',
       price: 30000,
       days: 90,
-      description: 'Truy cập bản đồ trong 90 ngày',
-      popular: true
+      description: 'Truy cập bản đồ trong 90 ngày'
     },
     {
       id: '6-months',
       name: 'Gói 6 tháng',
       price: 60000,
       days: 180,
-      description: 'Truy cập bản đồ trong 180 ngày',
-      popular: false
+      description: 'Truy cập bản đồ trong 180 ngày'
     }
   ];
 
@@ -306,14 +301,6 @@ export function UpgradePage() {
                       whileHover={{ scale: 1.02 }}
                       whileTap={{ scale: 0.98 }}
                     >
-                      {pkg.popular && (
-                        <div className="absolute -top-3 left-1/2 transform -translate-x-1/2">
-                          <span className="bg-gradient-to-r from-cyan-500 to-blue-500 text-white text-xs px-3 py-1 rounded-full">
-                            Phổ biến nhất
-                          </span>
-                        </div>
-                      )}
-                      
                       <div className="text-center">
                         <h3 className="text-xl font-bold text-white mb-2">{pkg.name}</h3>
                         <div className="text-3xl font-bold text-cyan-400 mb-2">

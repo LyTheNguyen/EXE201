@@ -288,6 +288,15 @@ export function UserProfilePage() {
           <div className="p-6 md:p-8">
             <h2 className="text-2xl font-bold text-white mb-4 md:mb-6">Thông tin tài khoản</h2>
             
+            {user.role === 'admin' && (
+              <div className="mb-6 p-4 bg-purple-500/20 border border-purple-400/40 rounded-xl">
+                <div className="flex items-center gap-2 text-purple-200">
+                  <User className="w-5 h-5" />
+                  <p className="font-semibold">Tài khoản Admin - Không cần nâng cấp</p>
+                </div>
+              </div>
+            )}
+            
             <div className="space-y-4 md:space-y-5 mb-8">
               <motion.div
                 className="p-6 bg-slate-900/70 rounded-xl border border-cyan-400/30 shadow-lg shadow-cyan-500/10"
@@ -362,87 +371,92 @@ export function UserProfilePage() {
                 </motion.div>
               </div>
 
-              {/* Money Balance */}
-              <motion.div
-                className="p-6 bg-gradient-to-r from-yellow-500/10 to-orange-500/10 rounded-xl border border-yellow-400/30 shadow-lg shadow-yellow-500/10"
-                initial={{ x: -20, opacity: 0 }}
-                animate={{ x: 0, opacity: 1 }}
-                transition={{ delay: 0.65 }}
-              >
-                <div className="flex items-center justify-between">
-                  <div>
-                    <label className="text-sm font-medium text-slate-300 mb-1 block flex items-center gap-2">
-                      <Clock className="w-4 h-4" />
-                      Thời gian sử dụng bản đồ
-                    </label>
-                    <p className="text-2xl font-bold text-cyan-300">
-                      {timeRemaining || "Không có"}
-                    </p>
-                    {user.mapAccessExpiresAt && (
-                      <p className="text-xs text-slate-400 mt-1">
-                        Hết hạn: {new Date(user.mapAccessExpiresAt).toLocaleDateString('vi-VN')}
-                      </p>
-                    )}
-                  </div>
-                  <button
-                    onClick={() => navigate("/upgrade")}
-                    className="px-4 py-2 bg-gradient-to-r from-cyan-500 to-blue-500 hover:from-cyan-600 hover:to-blue-600 text-white rounded-lg text-sm font-medium transition-all"
+              {/* Phần này chỉ hiển thị cho user thường, không hiển thị cho admin */}
+              {user.role !== 'admin' && (
+                <>
+                  {/* Thời gian sử dụng bản đồ */}
+                  <motion.div
+                    className="p-6 bg-gradient-to-r from-cyan-500/10 to-blue-500/10 rounded-xl border border-cyan-400/30 shadow-lg shadow-cyan-500/10"
+                    initial={{ x: -20, opacity: 0 }}
+                    animate={{ x: 0, opacity: 1 }}
+                    transition={{ delay: 0.7 }}
                   >
-                    Gia hạn
-                  </button>
-                </div>
-              </motion.div>
-
-              {/* Upgrade Status */}
-              <motion.div
-                className={`p-6 rounded-xl border ${
-                  user.hasMapAccess && user.upgradeStatus === 'approved'
-                    ? 'bg-green-500/10 border-green-400/70'
-                    : user.upgradeStatus === 'pending'
-                    ? 'bg-yellow-500/10 border-yellow-400/70'
-                    : 'bg-slate-900/70 border-cyan-400/30 shadow-lg shadow-cyan-500/10'
-                }`}
-                initial={{ x: -20, opacity: 0 }}
-                animate={{ x: 0, opacity: 1 }}
-                transition={{ delay: 0.7 }}
-              >
-                <div className="flex items-center justify-between">
-                  <div>
-                    <label className="text-sm font-medium text-slate-300 mb-1 block">Tài khoản đã nâng cấp</label>
-                    <p className={`text-lg font-semibold ${
-                      user.hasMapAccess && user.upgradeStatus === 'approved'
-                        ? 'text-green-300'
-                        : user.upgradeStatus === 'pending'
-                        ? 'text-yellow-300'
-                        : 'text-slate-300'
-                    }`}>
-                      {user.hasMapAccess && user.upgradeStatus === 'approved' ? (
-                        <span className="flex items-center gap-2">
-                          <CheckCircle className="w-5 h-5" />
-                          Đã nâng cấp
-                        </span>
-                      ) : user.upgradeStatus === 'pending' ? (
-                        'Đang chờ cấp quyền'
-                      ) : (
-                        'Chưa nâng cấp'
-                      )}
-                    </p>
-                  </div>
-                  {user.hasMapAccess && user.upgradeStatus === 'approved' && user.mapAccessExpiresAt && (
-                    <div className="text-right">
-                      <label className="text-sm font-medium text-slate-300 mb-1 block flex items-center gap-1 justify-end">
-                        <Clock className="w-4 h-4" />
-                        Thời gian còn lại
-                      </label>
-                      <p className={`text-lg font-mono font-bold ${
-                        timeRemaining === "Đã hết hạn" ? 'text-red-400' : 'text-cyan-300'
-                      }`}>
-                        {timeRemaining || "Đang tính..."}
-                      </p>
+                    <div className="flex items-center justify-between">
+                      <div>
+                        <label className="text-sm font-medium text-slate-300 mb-1 block flex items-center gap-2">
+                          <Clock className="w-4 h-4" />
+                          Thời gian sử dụng bản đồ
+                        </label>
+                        <p className="text-2xl font-bold text-cyan-300">
+                          {timeRemaining || "Không có"}
+                        </p>
+                        {user.mapAccessExpiresAt && (
+                          <p className="text-xs text-slate-400 mt-1">
+                            Hết hạn: {new Date(user.mapAccessExpiresAt).toLocaleDateString('vi-VN')}
+                          </p>
+                        )}
+                      </div>
+                      <button
+                        onClick={() => navigate("/upgrade")}
+                        className="px-4 py-2 bg-gradient-to-r from-cyan-500 to-blue-500 hover:from-cyan-600 hover:to-blue-600 text-white rounded-lg text-sm font-medium transition-all"
+                      >
+                        Gia hạn
+                      </button>
                     </div>
-                  )}
-                </div>
-              </motion.div>
+                  </motion.div>
+
+                  {/* Upgrade Status */}
+                  <motion.div
+                    className={`p-6 rounded-xl border ${
+                      user.hasMapAccess && user.upgradeStatus === 'approved'
+                        ? 'bg-green-500/10 border-green-400/70'
+                        : user.upgradeStatus === 'pending'
+                        ? 'bg-yellow-500/10 border-yellow-400/70'
+                        : 'bg-slate-900/70 border-cyan-400/30 shadow-lg shadow-cyan-500/10'
+                    }`}
+                    initial={{ x: -20, opacity: 0 }}
+                    animate={{ x: 0, opacity: 1 }}
+                    transition={{ delay: 0.75 }}
+                  >
+                    <div className="flex items-center justify-between">
+                      <div>
+                        <label className="text-sm font-medium text-slate-300 mb-1 block">Tài khoản đã nâng cấp</label>
+                        <p className={`text-lg font-semibold ${
+                          user.hasMapAccess && user.upgradeStatus === 'approved'
+                            ? 'text-green-300'
+                            : user.upgradeStatus === 'pending'
+                            ? 'text-yellow-300'
+                            : 'text-slate-300'
+                        }`}>
+                          {user.hasMapAccess && user.upgradeStatus === 'approved' ? (
+                            <span className="flex items-center gap-2">
+                              <CheckCircle className="w-5 h-5" />
+                              Đã nâng cấp
+                            </span>
+                          ) : user.upgradeStatus === 'pending' ? (
+                            'Đang chờ cấp quyền'
+                          ) : (
+                            'Chưa nâng cấp'
+                          )}
+                        </p>
+                      </div>
+                      {user.hasMapAccess && user.upgradeStatus === 'approved' && user.mapAccessExpiresAt && (
+                        <div className="text-right">
+                          <label className="text-sm font-medium text-slate-300 mb-1 block flex items-center gap-1 justify-end">
+                            <Clock className="w-4 h-4" />
+                            Thời gian còn lại
+                          </label>
+                          <p className={`text-lg font-mono font-bold ${
+                            timeRemaining === "Đã hết hạn" ? 'text-red-400' : 'text-cyan-300'
+                          }`}>
+                            {timeRemaining || "Đang tính..."}
+                          </p>
+                        </div>
+                      )}
+                    </div>
+                  </motion.div>
+                </>
+              )}
 
               </div>
 

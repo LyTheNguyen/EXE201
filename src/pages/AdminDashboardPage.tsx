@@ -13,6 +13,7 @@ interface User {
   upgradeStatus: string;
   upgradeRequestedAt?: string;
   mapAccessGrantedAt?: string;
+  money?: number;
 }
 
 export function AdminDashboardPage() {
@@ -341,6 +342,9 @@ export function AdminDashboardPage() {
                     Vai trò
                   </th>
                   <th className="px-6 py-3 text-xs font-medium text-slate-300 uppercase tracking-wider text-center">
+                    Số tiền
+                  </th>
+                  <th className="px-6 py-3 text-xs font-medium text-slate-300 uppercase tracking-wider text-center">
                     Quyền Map
                   </th>
                   <th className="px-6 py-3 text-xs font-medium text-slate-300 uppercase tracking-wider text-center">
@@ -367,6 +371,11 @@ export function AdminDashboardPage() {
                           : 'bg-blue-500/20 text-blue-200'
                       }`}>
                         {u.role === 'admin' ? 'Admin' : 'User'}
+                      </span>
+                    </td>
+                    <td className="px-6 py-4 whitespace-nowrap text-center">
+                      <span className="text-sm font-semibold text-green-400">
+                        {(u.money || 0).toLocaleString('vi-VN')} ₫
                       </span>
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap text-center">

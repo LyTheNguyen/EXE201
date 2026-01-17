@@ -398,7 +398,7 @@ export function UserProfilePage() {
                       </div>
                       <button
                         onClick={() => navigate("/upgrade")}
-                        className="px-4 py-2 bg-gradient-to-r from-cyan-500 to-blue-500 hover:from-cyan-600 hover:to-blue-600 text-white rounded-lg text-sm font-medium transition-all"
+                        className="px-6 py-3 bg-gradient-to-r from-cyan-500 to-blue-500 hover:from-cyan-600 hover:to-blue-600 text-white rounded-xl text-base font-bold transition-all shadow-lg shadow-cyan-500/50"
                       >
                         Gia hạn
                       </button>

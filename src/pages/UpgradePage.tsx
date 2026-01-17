@@ -62,6 +62,14 @@ export function UpgradePage() {
 
     try {
       const userData = JSON.parse(userStr);
+      
+      // Nếu là admin thì redirect về trang chủ
+      if (userData.role === 'admin') {
+        alert('Admin không cần nâng cấp tài khoản');
+        navigate("/");
+        return;
+      }
+      
       setUser(userData);
       setUpgradeStatus(userData.upgradeStatus || "none");
       
@@ -207,12 +215,12 @@ export function UpgradePage() {
             {/* Status Display */}
             {upgradeStatus === "none" && (
               <motion.div
-                className="mb-8 p-4 bg-yellow-500/20 border border-yellow-400/30 rounded-lg"
+                className="mb-8 p-6 bg-gradient-to-r from-yellow-500/30 to-orange-500/30 border-2 border-yellow-400/60 rounded-xl shadow-lg shadow-yellow-500/20"
                 initial={{ opacity: 0, y: -10 }}
                 animate={{ opacity: 1, y: 0 }}
               >
-                <p className="text-yellow-200 text-sm">
-                  Bạn chưa nâng cấp tài khoản. Vui lòng quét mã QR để thanh toán.
+                <p className="text-white text-base font-semibold text-center">
+                  🔒 Bạn chưa nâng cấp tài khoản. Vui lòng chọn gói và quét mã QR để thanh toán.
                 </p>
               </motion.div>
             )}
@@ -405,24 +413,15 @@ export function UpgradePage() {
                       setPaymentData(null);
                       setSelectedPackage(null);
                     }}
-                    className="mb-4 px-6 py-2 bg-slate-600 hover:bg-slate-700 text-white text-sm rounded-lg transition-colors"
+                    className="px-8 py-3 bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-500 hover:to-pink-500 text-white font-bold rounded-xl transition-all shadow-lg shadow-purple-500/50 border-2 border-purple-400"
                     whileHover={{ scale: 1.05 }}
                     whileTap={{ scale: 0.95 }}
                   >
                     ← Chọn gói khác
                   </motion.button>
                   
-                  <motion.button
-                    onClick={handleRequestUpgrade}
-                    disabled={loading}
-                    className="px-8 py-3 bg-gradient-to-r from-cyan-500 to-blue-500 hover:from-cyan-600 hover:to-blue-600 text-white rounded-lg font-medium transition-all disabled:opacity-50"
-                    whileHover={{ scale: 1.05 }}
-                    whileTap={{ scale: 0.95 }}
-                  >
-                    {loading ? "Đang xử lý..." : "Xác nhận đã thanh toán"}
-                  </motion.button>
-                  <p className="text-xs text-slate-400 mt-2">
-                    Nhấn nút này sau khi bạn đã quét QR và thanh toán thành công
+                  <p className="text-base text-cyan-300 font-semibold mt-6 bg-slate-800/50 rounded-lg p-4 border border-cyan-500/30">
+                    ✨ Sau khi thanh toán, quyền truy cập sẽ được gia hạn tự động trong vài giây
                   </p>
                 </div>
               </motion.div>

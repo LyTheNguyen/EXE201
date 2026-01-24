@@ -8,7 +8,7 @@ const { authenticate } = require('../middleware/auth');
 router.post('/create-payment-link', authenticate, async (req, res) => {
   try {
     const { amount, description } = req.body;
-    const userId = req.user.id;
+    const userId = req.user.userId || req.user.id;
 
     // Tạo order data theo PayOS API
     const orderData = {
@@ -43,7 +43,9 @@ router.post('/webhook', async (req, res) => {
   try {
     const webhookData = req.body;
     
-    console.log('Webhook received:', webhookData);
+    console.log('=== WEBHOOK RECEIVED ===');
+    console.log('Full webhook data:', JSON.stringify(webhookData, null, 2));
+    console.log('Request headers:', req.headers);
 
     // PayOS webhook structure: {data: {orderCode, amount, status, ...}, ...}
     const paymentData = webhookData.data || webhookData;
@@ -73,6 +75,8 @@ router.post('/webhook', async (req, res) => {
       }
       
       if (user) {
+        console.log(`✅ Found user: ${user._id} (${user.email})`);
+        
         // Xác định số ngày gia hạn dựa trên số tiền thực nhận
         let daysToAdd = 0;
         if (amount >= 60000) {
@@ -124,8 +128,12 @@ router.post('/webhook', async (req, res) => {
           }
         );
 
-        console.log(`Extended map access for user ${user._id} by ${daysToAdd} days until ${newExpiryDate}`);
+        console.log(`✅ Extended map access for user ${user._id} by ${daysToAdd} days until ${newExpiryDate}`);
+      } else {
+        console.log(`❌ User not found! userId: ${userId}, buyerEmail: ${buyerEmail}`);
       }
+    } else {
+      console.log(`⚠️ Payment status is not PAID: ${paymentData.status}`);
     }
 
     res.json({ success: true });
@@ -134,6 +142,92 @@ router.post('/webhook', async (req, res) => {
     res.status(500).json({
       success: false,
       message: 'Webhook processing error',
+      error: error.message
+    });
+  }
+});
+
+// Test endpoint để kiểm tra webhook manually (CHỈ CHO DEVELOPMENT)
+router.post('/test-webhook', async (req, res) => {
+  if (process.env.NODE_ENV === 'production') {
+    return res.status(403).json({ success: false, message: 'Not allowed in production' });
+  }
+
+  try {
+    const { userId, amount } = req.body;
+    
+    if (!userId || !amount) {
+      return res.status(400).json({ 
+        success: false, 
+        message: 'userId and amount are required' 
+      });
+    }
+
+    const user = await User.findById(userId);
+    if (!user) {
+      return res.status(404).json({ 
+        success: false, 
+        message: 'User not found' 
+      });
+    }
+
+    // Xác định số ngày gia hạn
+    let daysToAdd = 0;
+    if (amount >= 60000) {
+      daysToAdd = 180;
+    } else if (amount >= 30000) {
+      daysToAdd = 90;
+    } else if (amount >= 10000) {
+      daysToAdd = 30;
+    } else if (amount >= 2000) {
+      daysToAdd = 2;
+    } else if (amount >= 1000) {
+      daysToAdd = 1;
+    }
+
+    let newExpiryDate = new Date();
+    if (user.mapAccessExpiry && user.mapAccessExpiry > new Date()) {
+      newExpiryDate = new Date(user.mapAccessExpiry);
+    }
+    newExpiryDate.setDate(newExpiryDate.getDate() + daysToAdd);
+
+    await User.findByIdAndUpdate(
+      user._id,
+      { 
+        $inc: { money: amount },
+        $set: { 
+          hasMapAccess: true,
+          upgradeStatus: 'approved',
+          mapAccessExpiry: newExpiryDate
+        },
+        $push: {
+          transactions: {
+            type: 'purchase',
+            amount: amount,
+            orderCode: 'TEST_' + Date.now(),
+            status: 'completed',
+            createdAt: new Date(),
+            description: `Test - Gia hạn ${daysToAdd} ngày`
+          }
+        }
+      }
+    );
+
+    res.json({
+      success: true,
+      message: `Upgraded user ${user.email} for ${daysToAdd} days until ${newExpiryDate}`,
+      data: {
+        userId: user._id,
+        email: user.email,
+        daysAdded: daysToAdd,
+        expiryDate: newExpiryDate
+      }
+    });
+  } catch (error) {
+    console.error('Test webhook error:', error);
+    res.status(500).json({
+      success: false,
+      message: 'Error processing test webhook',
       error: error.message
     });
   }
@@ -164,10 +258,76 @@ router.get('/check-status/:orderCode', authenticate, async (req, res) => {
 // Lấy thông tin user (bao gồm số tiền)
 router.get('/user-info', authenticate, async (req, res) => {
   try {
-    const user = await User.findById(req.user.id).select('-password');
+    const userId = req.user.userId || req.user.id;
+    const user = await User.findById(userId).select('-password');
+    
+    // Tính toán số ngày còn lại nếu có expiry date
+    let daysRemaining = null;
+    if (user.mapAccessExpiry) {
+      const now = new Date();
+      const expiry = new Date(user.mapAccessExpiry);
+      const diffTime = expiry - now;
+      daysRemaining = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+    }
+    
     res.json({
       success: true,
-      data: user
+      data: {
+        ...user.toObject(),
+        daysRemaining: daysRemaining > 0 ? daysRemaining : 0,
+        isExpired: daysRemaining !== null && daysRemaining <= 0
+      }
+    });
+  } catch (error) {
+    res.status(500).json({
+      success: false,
+      message: 'Error fetching user info',
+      error: error.message
+    });
+  }
+});
+
+// Debug endpoint - lấy thông tin user by email (CHỈ CHO DEVELOPMENT)
+router.get('/debug/user/:email', async (req, res) => {
+  if (process.env.NODE_ENV === 'production') {
+    return res.status(403).json({ success: false, message: 'Not allowed in production' });
+  }
+
+  try {
+    const user = await User.findOne({ email: req.params.email }).select('-password');
+    
+    if (!user) {
+      return res.status(404).json({ 
+        success: false, 
+        message: 'User not found' 
+      });
+    }
+
+    // Tính toán số ngày còn lại
+    let daysRemaining = null;
+    if (user.mapAccessExpiry) {
+      const now = new Date();
+      const expiry = new Date(user.mapAccessExpiry);
+      const diffTime = expiry - now;
+      daysRemaining = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+    }
+
+    res.json({
+      success: true,
+      data: {
+        id: user._id,
+        email: user.email,
+        name: user.name,
+        role: user.role,
+        hasMapAccess: user.hasMapAccess,
+        upgradeStatus: user.upgradeStatus,
+        mapAccessExpiry: user.mapAccessExpiry,
+        daysRemaining: daysRemaining,
+        isExpired: daysRemaining !== null && daysRemaining <= 0,
+        money: user.money,
+        transactionCount: user.transactions?.length || 0,
+        recentTransactions: user.transactions?.slice(-5) || []
+      }
     });
   } catch (error) {
     res.status(500).json({
